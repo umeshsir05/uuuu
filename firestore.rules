@@ -1,0 +1,161 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId == request.auth.uid &&
+             data.defaultRate is number && data.defaultRate >= 0 && data.defaultRate <= 1000 &&
+             (!('dairyName' in data) || (data.dairyName is string && data.dairyName.size() <= 100)) &&
+             (!('contactPhone' in data) || (data.contactPhone is string && data.contactPhone.size() <= 30)) &&
+             (!('cowRate' in data) || (data.cowRate is number && data.cowRate >= 0 && data.cowRate <= 1000)) &&
+             (!('buffaloRate' in data) || (data.buffaloRate is number && data.buffaloRate >= 0 && data.buffaloRate <= 1000)) &&
+             (!('upiId' in data) || (data.upiId is string && data.upiId.size() <= 100)) &&
+             (!('language' in data) || (data.language in ['hi', 'en']));
+    }
+
+    function isValidMilkEntry(data) {
+      return data.userId == request.auth.uid &&
+             data.date is string && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+             data.shift in ['MORNING', 'EVENING'] &&
+             (!('milkType' in data) || data.milkType in ['COW', 'BUFFALO', 'STANDARD']) &&
+             data.quantity is number && data.quantity >= 0 && data.quantity <= 500 &&
+             data.rate is number && data.rate >= 0 && data.rate <= 1000 &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.isSkipped is bool &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500));
+    }
+
+    function isValidPayment(data) {
+      return data.userId == request.auth.uid &&
+             data.date is string && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+             data.month is string && data.month.matches('^[0-9]{4}-[0-9]{2}$') &&
+             data.amount is number && data.amount > 0 && data.amount <= 1000000 &&
+             data.paymentMethod in ['UPI', 'CASH', 'BANK'] &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500));
+    }
+
+    function isValidRateHistory(data) {
+      return data.userId == request.auth.uid &&
+             data.effectiveDate is string && data.effectiveDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+             data.milkType in ['COW', 'BUFFALO', 'STANDARD'] &&
+             data.rate is number && data.rate >= 0 && data.rate <= 1000 &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500));
+    }
+
+    match /users/{userId} {
+      allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll(['userId', 'defaultRate', 'createdAt']) &&
+                       incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                       isValidUserProfile(incoming());
+
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (!('updatedAt' in incoming()) || (incoming().updatedAt is timestamp && incoming().updatedAt <= request.time)) &&
+                       isValidUserProfile(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'dairyName', 'contactPhone', 'defaultRate', 'cowRate', 'buffaloRate', 'upiId', 'language', 'updatedAt'
+                       ]);
+
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+
+      // Milk Entries subcollection
+      match /entries/{entryId} {
+        allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'date', 'shift', 'quantity', 'rate', 'totalAmount', 'isSkipped', 'createdAt']) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         isValidMilkEntry(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         (!('updatedAt' in incoming()) || (incoming().updatedAt is timestamp && incoming().updatedAt <= request.time)) &&
+                         isValidMilkEntry(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'date', 'shift', 'milkType', 'quantity', 'rate', 'totalAmount', 'isSkipped', 'notes', 'updatedAt'
+                         ]);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Payments subcollection
+      match /payments/{paymentId} {
+        allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'date', 'month', 'amount', 'paymentMethod', 'createdAt']) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         isValidPayment(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         (!('updatedAt' in incoming()) || (incoming().updatedAt is timestamp && incoming().updatedAt <= request.time)) &&
+                         isValidPayment(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'date', 'month', 'amount', 'paymentMethod', 'notes', 'updatedAt'
+                         ]);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Rate History subcollection
+      match /rate_history/{rateId} {
+        allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().keys().hasAll(['userId', 'effectiveDate', 'milkType', 'rate', 'createdAt']) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         isValidRateHistory(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         (!('updatedAt' in incoming()) || (incoming().updatedAt is timestamp && incoming().updatedAt <= request.time)) &&
+                         isValidRateHistory(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'effectiveDate', 'milkType', 'rate', 'notes', 'updatedAt'
+                         ]);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId;
+      }
+    }
+  }
+}

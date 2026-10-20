@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with dairy preferences and default milk rates",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The Firebase Auth UID of the user" },
+        "dairyName": { "type": "string", "description": "Name of the dairy, milkman or customer" },
+        "contactPhone": { "type": "string", "description": "WhatsApp contact phone number with country code" },
+        "defaultRate": { "type": "number", "description": "Default rate per litre in Rupees" },
+        "cowRate": { "type": "number", "description": "Default Cow milk rate per litre in Rupees" },
+        "buffaloRate": { "type": "number", "description": "Default Buffalo milk rate per litre in Rupees" },
+        "upiId": { "type": "string", "description": "UPI ID for payment receipt and reminders" },
+        "language": { "type": "string", "description": "Preferred app language (hi or en)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["userId", "defaultRate", "createdAt"]
+    },
+    "MilkEntry": {
+      "title": "MilkEntry",
+      "description": "Daily morning/evening milk log entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "userId": { "type": "string", "description": "The Firebase Auth UID of the user" },
+        "date": { "type": "string", "description": "Date in YYYY-MM-DD format" },
+        "shift": { "type": "string", "enum": ["MORNING", "EVENING"], "description": "Shift of delivery" },
+        "milkType": { "type": "string", "enum": ["COW", "BUFFALO", "STANDARD"], "description": "Type of milk" },
+        "quantity": { "type": "number", "description": "Quantity in litres" },
+        "rate": { "type": "number", "description": "Rate per litre in Rupees applied to this entry" },
+        "totalAmount": { "type": "number", "description": "Total amount in Rupees (quantity * rate)" },
+        "isSkipped": { "type": "boolean", "description": "Whether delivery was skipped/holiday" },
+        "notes": { "type": "string", "description": "Optional notes or remarks" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["userId", "date", "shift", "quantity", "rate", "totalAmount", "isSkipped", "createdAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Record of payment made towards milk bill",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "userId": { "type": "string", "description": "The Firebase Auth UID of the user" },
+        "date": { "type": "string", "description": "Payment date in YYYY-MM-DD format" },
+        "month": { "type": "string", "description": "Target month in YYYY-MM format" },
+        "amount": { "type": "number", "description": "Payment amount in Rupees" },
+        "paymentMethod": { "type": "string", "enum": ["UPI", "CASH", "BANK"], "description": "Payment method" },
+        "notes": { "type": "string", "description": "Optional payment note" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["userId", "date", "month", "amount", "paymentMethod", "createdAt"]
+    },
+    "RateHistory": {
+      "title": "RateHistory",
+      "description": "Log of rate updates and changes over time",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "userId": { "type": "string", "description": "The Firebase Auth UID of the user" },
+        "effectiveDate": { "type": "string", "description": "Effective starting date in YYYY-MM-DD" },
+        "milkType": { "type": "string", "enum": ["COW", "BUFFALO", "STANDARD"], "description": "Type of milk" },
+        "rate": { "type": "number", "description": "New rate per litre in Rupees" },
+        "notes": { "type": "string", "description": "Reason or note for rate change" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["userId", "effectiveDate", "milkType", "rate", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile and default milk settings"
+    },
+    "/users/{userId}/entries/{entryId}": {
+      "schema": { "$ref": "#/entities/MilkEntry" },
+      "description": "Daily milk entries for morning/evening shifts"
+    },
+    "/users/{userId}/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Payment records for milk ledger"
+    },
+    "/users/{userId}/rate_history/{rateId}": {
+      "schema": { "$ref": "#/entities/RateHistory" },
+      "description": "Historical record of milk rates"
+    }
+  }
+}
