@@ -1,6 +1,0 @@
-{
-  "name": "Doodh Hisab",
-  "description": "दूध का दैनिक हिसाब, रेट प्रबंधन, ऑटोमैटिक मासिक बिल, व्हाट्सएप बिल शेयरिंग और पेमेंट रिमाइंडर",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
