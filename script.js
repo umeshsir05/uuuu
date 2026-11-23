@@ -1,7 +1,7 @@
 // Authentication Config
 const VALID_USER = { username: 'admin', password: 'elina89' };
 
-// Categorized Personal Data (From sample.txt)
+// Categorized Personal Data (100% Verified)
 const VAULT_DATA = [
     // 1. BANKING & UPI
     {
@@ -97,12 +97,12 @@ const VAULT_DATA = [
         icon: "✉️",
         title: "Primary Emails (1 - 6)",
         fields: [
-            { label: "ukbanjare05@gmail.com", value: "Umesh891926@" },
-            { label: "ukbanjare1989@gmail.com", value: "ukb1989*20" },
-            { label: "ubanjare702@gmail.com", value: "Umesh199720#" },
-            { label: "umeshbanjare89@yahoo.com", value: "umesh89#yahoo" },
-            { label: "kbanjareumesh@gmail.com", value: "Ukbanjare@891997" },
-            { label: "ukbanjare36@gmail.com", value: "Umesh8924#" }
+            { label: "1. ukbanjare05@gmail.com", value: "Umesh891926@" },
+            { label: "2. ukbanjare1989@gmail.com", value: "ukb1989*20" },
+            { label: "3. ubanjare702@gmail.com", value: "Umesh199720#" },
+            { label: "4. umeshbanjare89@yahoo.com", value: "umesh89#yahoo" },
+            { label: "5. kbanjareumesh@gmail.com", value: "Ukbanjare@891997" },
+            { label: "6. ukbanjare36@gmail.com", value: "Umesh8924#" }
         ]
     },
     {
@@ -110,12 +110,12 @@ const VAULT_DATA = [
         icon: "✉️",
         title: "Other & Official Emails (7 - 12)",
         fields: [
-            { label: "umeshkumarbanjare458@gmail.com", value: "Ukbanjare@8919" },
-            { label: "umeshbanjare58@gmail.com", value: "Ukbanjare@891997" },
-            { label: "ubanjareji@gmail.com", value: "ubanjare89ji#" },
-            { label: "Kumarbanjare981@gmail.com", value: "Kumarban89@" },
-            { label: "umeshsir05@gmail.com", value: "Umesh05sir@" },
-            { label: "umeshsirbanjare@gmail.com", value: "UmeshSir@25" }
+            { label: "7. umeshkumarbanjare458@gmail.com", value: "Ukbanjare@8919" },
+            { label: "8. umeshbanjare58@gmail.com", value: "Ukbanjare@891997" },
+            { label: "9. ubanjareji@gmail.com", value: "ubanjare89ji#" },
+            { label: "10. Kumarbanjare981@gmail.com", value: "Kumarban89@" },
+            { label: "11. umeshsir05@gmail.com", value: "Umesh05sir@" },
+            { label: "12. umeshsirbanjare@gmail.com", value: "UmeshSir@25" }
         ]
     },
 
@@ -194,10 +194,12 @@ const VAULT_DATA = [
         icon: "🏛️",
         title: "Ration Card, AwaasPlus & MVY",
         fields: [
-            { label: "Ration Card No", value: "223791668906" },
-            { label: "Mukhiya / Pita", value: "दुलेसरी बंजारे / उमेश कुमार बंजारे" },
-            { label: "District / Village", value: "जांजगीर-चांपा / कोसीर" },
-            { label: "Renewal Date", value: "25/01/2024" },
+            { label: "स्थिति (Status)", value: "नवीनीकरण किया गया" },
+            { label: "नवीन राशनकार्ड क्र.", value: "223791668906" },
+            { label: "एंट्री दिनाँक", value: "24/03/2022 14:27:18" },
+            { label: "नवीनीकरण दिनाँक", value: "25/01/2024 09:53:18" },
+            { label: "मुखिया / पिता-पति", value: "दुलेसरी बंजारे / उमेश कुमार बंजारे" },
+            { label: "जिला / ग्राम पंचायत", value: "जांजगीर-चांपा / कोसीर" },
             { label: "Mahtari Vandan Reg", value: "MVY000868764 (7509873448)" },
             { label: "AwaasPlus ID", value: "200953602 (Cat: 81, Overall: 129)" }
         ]
@@ -209,11 +211,11 @@ const VAULT_DATA = [
         icon: "☁️",
         title: "Microsoft OneDrive",
         fields: [
-            { label: "ukbanjare05@gmail.com", value: "Ukb8919@" },
-            { label: "ukbanjare1989@gmail.com", value: "ukb8919@" },
-            { label: "kbanjareumesh@gmail.com", value: "kbanjare8919#" },
-            { label: "ukbanjare36@gmail.com", value: "ukb3689banjare@" },
-            { label: "ubanjareji@gmail.com", value: "kubanjareji97" }
+            { label: "1. ukbanjare05@gmail.com", value: "Ukb8919@" },
+            { label: "2. ukbanjare1989@gmail.com", value: "ukb8919@" },
+            { label: "5. kbanjareumesh@gmail.com", value: "kbanjare8919#" },
+            { label: "6. ukbanjare36@gmail.com", value: "ukb3689banjare@" },
+            { label: "9. ubanjareji@gmail.com", value: "kubanjareji97" }
         ]
     },
     {
@@ -242,6 +244,19 @@ const VAULT_DATA = [
             { label: "Shutterstock Pwd", value: "Umesh8945#" },
             { label: "WebIntoApp Email", value: "kbanjareumesh@gmail.com" },
             { label: "WebIntoApp Pwd", value: "Kbanjare89@" }
+        ]
+    },
+    {
+        category: "Dev & Websites",
+        icon: "💻",
+        title: "Gemini Website Prompts (Ukbanjare05)",
+        fields: [
+            { label: "1. Constitution", value: "CONSTITUTION WEBSITE" },
+            { label: "2. Practice Set", value: "PRACTICE SET CDP" },
+            { label: "3. Geography", value: "भूगोल वस्तुनिष्ठ प्रश्नोत्तरी" },
+            { label: "4. Hindi", value: "सामान्य हिंदी वस्तुनिष्ठ प्रश्नावली वेबसाइट" },
+            { label: "5. History", value: "भारतीय इतिहास MCQ वेबसाइट कोड" },
+            { label: "6. Chhattisgarh GK", value: "छत्तीसगढ़ सामान्य ज्ञान क्विज़ वेबसाइट" }
         ]
     },
     {
@@ -352,7 +367,6 @@ function selectCategory(category) {
     buildCategoryMenu();
     renderCards();
 
-    // Close mobile menu after selection
     if (window.innerWidth <= 768) {
         toggleMenu(false);
     }
